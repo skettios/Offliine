@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using Android.Util;
 using Java.IO;
 using Java.Lang;
+using Exception = System.Exception;
 
 namespace Offliine.Injection
 {
@@ -9,10 +11,17 @@ namespace Offliine.Injection
     {
         public static void WriteU32(int value, OutputStream output)
         {
-            output.Write(value >> 24 & 0xff);
-            output.Write(value >> 16 & 0xff);
-            output.Write(value >> 8 & 0xff);
-            output.Write(value >> 0 & 0xff);
+            try
+            {
+                output.Write(value >> 24 & 0xff);
+                output.Write(value >> 16 & 0xff);
+                output.Write(value >> 8 & 0xff);
+                output.Write(value >> 0 & 0xff);
+            }
+            catch (Exception e)
+            {
+                Log.Debug("Offliine", e.Message);
+            }
         }
 
         public static byte[] ToArray(string value)
@@ -30,19 +39,28 @@ namespace Offliine.Injection
 
         public static byte[] ReadFile(File file)
         {
-            var input = new FileInputStream(file);
-            var output = new ByteArrayOutputStream();
+            try
+            {
+                var input = new FileInputStream(file);
+                var output = new ByteArrayOutputStream();
 
-            var buffer = new byte['Ѐ'];
+                var buffer = new byte['Ѐ'];
 
-            int read;
-            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                output.Write(buffer, 0, read);
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                    output.Write(buffer, 0, read);
 
-            input.Close();
-            output.Close();
+                input.Close();
+                output.Close();
 
-            return output.ToByteArray();
+                return output.ToByteArray();
+            }
+            catch (Exception e)
+            {
+                Log.Debug("Offliine", e.Message);
+            }
+
+            return null;
         }
     }
 }

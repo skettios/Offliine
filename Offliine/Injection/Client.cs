@@ -19,35 +19,46 @@ namespace Offliine.Injection
 
         public void Run()
         {
-            var input = _socket.InputStream;
-            var output = _socket.OutputStream;
-            var header = GetRequest(input);
-            var path = header.Path;
+            _socket.SendBufferSize = 50000;
+            _socket.ReceiveBufferSize = 50000;
 
-            var version = SystemVersions.GetSystemVersion(header.GetPropriety("User-Agent"));
-
-            if (version != null)
+            try
             {
-                if (path.IndexOf("?") != -1)
-                {
-                    var payload = path.Substring(path.IndexOf("?") + 1);
-                    Log.Debug("Offliine", payload);
-                    if (payload.Equals("hbl"))
-                        Serve(version, output, "hbl" + version.PayloadVersion + ".bin");
-                    else if (payload.Equals("loadiine"))
-                        Serve(version, output, "loadiine" + version.PayloadVersion + ".bin");
-                    else
-                        Serve(version, output, payload + ".bin");
-                }
-                else
-                {
-                    Serve(version, output, "hbl" + version.PayloadVersion + ".bin");
-                }
-            }
 
-            input.Close();
-            output.Close();
-            _socket.Close();
+                var input = _socket.InputStream;
+                var output = _socket.OutputStream;
+                var header = GetRequest(input);
+                var path = header.Path;
+
+                var version = SystemVersions.GetSystemVersion(header.GetPropriety("User-Agent"));
+
+                if (version != null)
+                {
+                    if (path.IndexOf("?") != -1)
+                    {
+                        var payload = path.Substring(path.IndexOf("?") + 1);
+                        Log.Debug("Offliine", payload);
+                        if (payload.Equals("hbl"))
+                            Serve(version, output, "hbl" + version.PayloadVersion + ".bin");
+                        else if (payload.Equals("loadiine"))
+                            Serve(version, output, "loadiine" + version.PayloadVersion + ".bin");
+                        else
+                            Serve(version, output, payload + ".bin");
+                    }
+                    else
+                    {
+                        Serve(version, output, "hbl" + version.PayloadVersion + ".bin");
+                    }
+                }
+
+                input.Close();
+                output.Close();
+                _socket.Close();
+            }
+            catch (Exception e)
+            {
+                Log.Debug("Offliine", e.Message);
+            }
         }
 
         private void WriteHeader(Writer writer, string contentType)

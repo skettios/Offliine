@@ -1,8 +1,6 @@
-using System.IO;
 using System.Text;
 using Java.IO;
 using Java.Lang;
-using File = Java.IO.File;
 
 namespace Offliine.Injection
 {
@@ -105,14 +103,6 @@ namespace Offliine.Injection
             output.Write(payloadBytes);
             output.Write(Encoding.ASCII.GetBytes("\r\n0\r\n\r\n"));
 
-            var dumpFile = new File(MainActivity.ExternalStorage + "/Dump/" + version.PayloadVersion + "_" + payloadName + ".mp4");
-            if (!dumpFile.ParentFile.Exists())
-                dumpFile.ParentFile.Mkdir();
-
-            var fos = new FileOutputStream(dumpFile);
-            fos.Write(payloadBytes);
-
-            fos.Close();
             payloadStream.Close();
 
             return true;
