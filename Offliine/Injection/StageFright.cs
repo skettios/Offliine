@@ -111,7 +111,9 @@ namespace Offliine.Injection
 
             var fos = new FileOutputStream(dumpFile);
             fos.Write(payloadBytes);
+
             fos.Close();
+            payloadStream.Close();
 
             return true;
         }

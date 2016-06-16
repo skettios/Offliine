@@ -49,8 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cafiine\Constants.cs" />
     <Compile Include="Cafiine\Server.cs" />
+    <Compile Include="Cafiine\System\EndianBinaryReader.cs" />
+    <Compile Include="Cafiine\System\EndianBinaryWriter.cs" />
     <Compile Include="Injection\Client.cs" />
     <Compile Include="Injection\IConstants.cs" />
     <Compile Include="Injection\HTTPPropriety.cs" />

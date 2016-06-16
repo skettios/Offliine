@@ -28,7 +28,7 @@ namespace Offliine.Injection
 
             if (version != null)
             {
-                if (path.IndexOf("?", StringComparison.Ordinal) != -1)
+                if (path.IndexOf("?") != -1)
                 {
                     var payload = path.Substring(path.IndexOf("?") + 1);
                     Log.Debug("Offliine", payload);
@@ -76,6 +76,8 @@ namespace Offliine.Injection
             {
                 Log.Debug("Offliine", "SUCCESS");
             }
+
+            writer.Close();
         }
 
         private HTTPRequest GetRequest(Stream input)

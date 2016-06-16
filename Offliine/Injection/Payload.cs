@@ -20,6 +20,8 @@ namespace Offliine.Injection
             output.Write(payload);
             output.Write(new byte[padding]);
 
+            output.Close();
+
             return output.ToByteArray();
         }
     }

@@ -26,6 +26,8 @@ namespace Offliine.Injection
                 version, output);
 
             Util.WriteU32(codegenAddr, output);
+            
+            output.Close();
 
             return output.ToByteArray();
         }

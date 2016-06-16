@@ -5,12 +5,9 @@ using Android.App;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.IO;
-using Java.Lang;
-using Offliine.Injection;
 
 namespace Offliine
 {
@@ -64,13 +61,11 @@ namespace Offliine
             offline.SetTextColor(Color.Red);
             offline.Click += delegate
             {
-                Log.Info("Offliine", "Click");
-
                 offline.Enabled = false;
                 offline.SetTextColor(Color.Green);
                 offline.Text = "Offliine: ON";
 
-                var server = new Server();
+                var server = new Injection.Server();
                 server.Start();
             };
 
@@ -81,6 +76,9 @@ namespace Offliine
                 cafiine.Enabled = false;
                 cafiine.SetTextColor(Color.Green);
                 cafiine.Text = "Cafiine: ON";
+
+                var server = new Cafiine.Server();
+                server.Start();
             };
         }
     }

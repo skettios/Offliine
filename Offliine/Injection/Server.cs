@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using Android.Util;
 using Java.Lang;
 using Java.Net;
 
@@ -16,7 +13,6 @@ namespace Offliine.Injection
 
         public void Run()
         {
-            Log.Info("Offliine", "Offliine server started.");
             var server = new ServerSocket(1337);
 
             var clientCount = 0;
@@ -24,7 +20,6 @@ namespace Offliine.Injection
             while (true)
             {
                 var socket = server.Accept();
-                Log.Info("Offliine", "searching...");
 
                 var client = new Client(socket);
                 var thread = new System.Threading.Thread(client.Run);

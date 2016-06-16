@@ -40,6 +40,7 @@ namespace Offliine.Injection
                 output.Write(buffer, 0, read);
 
             input.Close();
+            output.Close();
 
             return output.ToByteArray();
         }
