@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Android.Runtime;
 using Android.Util;
 using Java.IO;
@@ -11,19 +12,27 @@ namespace Offliine.Injection
     public class Client
     {
         private Socket _socket;
+        private string _threadName;
 
-        public Client(Socket socket)
+        public Client(Socket socket, string threadName)
         {
             _socket = socket;
+            _threadName = threadName;
+        }
+
+        public void Start()
+        {
+            var thread = new System.Threading.Thread(Run) {Name = _threadName};
+            Thread.Sleep(1000);
+            thread.Start();
         }
 
         public void Run()
         {
-            _socket.SendBufferSize = 50000;
-            _socket.ReceiveBufferSize = 50000;
-
             try
             {
+                _socket.SendBufferSize = 50000;
+                _socket.ReceiveBufferSize = 50000;
 
                 var input = _socket.InputStream;
                 var output = _socket.OutputStream;
@@ -53,11 +62,14 @@ namespace Offliine.Injection
 
                 input.Close();
                 output.Close();
-                _socket.Close();
             }
             catch (Exception e)
             {
                 Log.Debug("Offliine", e.Message);
+            }
+            finally
+            {
+                _socket.Close();
             }
         }
 

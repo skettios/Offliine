@@ -17,8 +17,7 @@ namespace Offliine.Injection
         {
             try
             {
-                var server = new ServerSocket(1337);
-                server.ReceiveBufferSize = 50000;
+                var server = new ServerSocket(1337) {ReceiveBufferSize = 50000};
 
                 var clientCount = 0;
 
@@ -26,15 +25,12 @@ namespace Offliine.Injection
                 {
                     var socket = server.Accept();
 
-                    var client = new Client(socket);
-                    var thread = new System.Threading.Thread(client.Run);
-
                     var builder = new StringBuilder();
                     builder.Append("clientThread-");
                     builder.Append(clientCount++);
-                    thread.Name = builder.ToString();
 
-                    thread.Start();
+                    var client = new Client(socket, builder.ToString());
+                    client.Start();
                 }
             }
             catch (Exception e)
