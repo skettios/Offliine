@@ -1,13 +1,17 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using Android;
 using Android.App;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Java.IO;
+using Environment = Android.OS.Environment;
+using File = Java.IO.File;
 
 namespace Offliine
 {
@@ -37,11 +41,7 @@ namespace Offliine
             if (!Cafiine.Exists())
                 Cafiine.Mkdir();
 
-            if (!Payloads.Exists())
-                Payloads.Mkdir();
-            
-            if (!Loaders.Exists())
-                Loaders.Mkdir();
+            _copyRequired();
 
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
@@ -54,7 +54,7 @@ namespace Offliine
             }
 
             var view = FindViewById<TextView>(Resource.Id.IpAddressText);
-            view.Text = "IP Address\n" + IpAddress;
+            view.Text = "IP Address\n" + IpAddress + ":1337/hax";
             view.Gravity = GravityFlags.Center;
 
             var offline = FindViewById<Button>(Resource.Id.OffliineButton);
@@ -80,6 +80,41 @@ namespace Offliine
                 var server = new Cafiine.Server();
                 server.Start();
             };
+        }
+
+        private void _copyRequired()
+        {
+            try
+            {
+                var assetManager = Assets;
+                var rootAssetList = assetManager.List("");
+                foreach (var s in rootAssetList)
+                {
+                    if (s.Equals("Loaders") || s.Equals("Payloads"))
+                    {
+                        var folder = new File(ExternalStorage, s);
+                        if (!folder.Exists())
+                            folder.Mkdir();
+                        else
+                            continue;
+
+                        var innerAssetList = assetManager.List(s);
+                        foreach (var name in innerAssetList)
+                        {
+                            var input = assetManager.Open(s + "/" + name);
+                            var output = System.IO.File.Create(folder + "/" + name);
+                            input.CopyTo(output);
+                            output.Flush();
+                            output.Close();
+                            input.Close();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Debug("Offliine", e.Message);
+            }
         }
     }
 }
