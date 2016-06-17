@@ -29,11 +29,14 @@ namespace Offliine
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.Main);
 
-            if (CheckSelfPermission(Manifest.Permission.Internet) != Permission.Granted)
-                RequestPermissions(new[] { Manifest.Permission.Internet }, 1);
+            if ((int) Build.VERSION.SdkInt >= 24)
+            {
+                if (CheckSelfPermission(Manifest.Permission.Internet) != Permission.Granted)
+                    RequestPermissions(new[] {Manifest.Permission.Internet}, 1);
 
-            if (CheckSelfPermission(Manifest.Permission.WriteExternalStorage) != Permission.Granted)
-                RequestPermissions(new[] { Manifest.Permission.WriteExternalStorage }, 1);
+                if (CheckSelfPermission(Manifest.Permission.WriteExternalStorage) != Permission.Granted)
+                    RequestPermissions(new[] {Manifest.Permission.WriteExternalStorage}, 1);
+            }
 
             if (!ExternalStorage.Exists())
                 ExternalStorage.Mkdir();
