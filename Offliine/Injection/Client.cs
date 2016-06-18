@@ -50,7 +50,7 @@ namespace Offliine.Injection
                     else
                     {
                         var fixedPath = path.Substring(path.IndexOf('/') + 1);
-                        if (fixedPath.Equals("cafiine") && (version == SystemVersions.Us540 || version == SystemVersions.Eu540 || version == SystemVersions.Jp540))
+                        if (fixedPath.Equals("sdcafiine") && (version == SystemVersions.Us540 || version == SystemVersions.Eu540 || version == SystemVersions.Jp540))
                             _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[1] + ".bin");
                         else
                             _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[0] + ".bin");

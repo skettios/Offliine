@@ -127,7 +127,7 @@ namespace Offliine
                         var innerAssetList = assetManager.List(s);
                         foreach (var name in innerAssetList)
                         {
-                            if (name.Equals("hbl_Homebrew Launcher") || name.Equals("loadiine_Loadiine") || name.Equals("ksploit_Kernel Exploit") || name.Equals("cafiine_Cafiine"))
+                            if (name.Equals("hbl_Homebrew Launcher") || name.Equals("loadiine_Loadiine") || name.Equals("ksploit_Kernel Exploit") || name.Equals("cafiine_Cafiine") || name.Equals("sdcafiine_SD Cafiine"))
                             {
                                 var payloadFolder = new File(folder, name);
                                 if (!payloadFolder.Exists())

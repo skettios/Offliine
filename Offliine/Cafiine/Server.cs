@@ -1,11 +1,14 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
+using System.IO;
+using Android.Util;
+using Console = System.Console;
+using File = Java.IO.File;
 
 namespace Offliine.Cafiine
 {
@@ -68,7 +71,7 @@ namespace Offliine.Cafiine
             public uint unk_60_zero;
         }
 
-        private string _root = MainActivity.Cafiine.Path;
+        private File _root = MainActivity.Cafiine;
 
         public void Start()
         {
@@ -116,13 +119,13 @@ namespace Offliine.Cafiine
 
                     var ids = reader.ReadUInt32s(4);
 
-                    if (!Directory.Exists(_root + "\\" + ids[0].ToString("X8") + "-" + ids[1].ToString("X8")))
+                    if (!new File(_root, ids[0].ToString("X8") + "-" + ids[1].ToString("X8")).Exists())
                     {
                         writer.Write(BYTE_NORMAL);
                         throw new Exception("Not interested.");
                     }
 
-                    var localRoot = _root + "\\" + ids[0].ToString("X8") + "-" + ids[1].ToString("X8");
+                    var localRoot = new File(_root, ids[0].ToString("X8") + "-" + ids[1].ToString("X8"));
                     writer.Write(BYTE_SPECIAL);
 
                     while (true)
@@ -140,7 +143,7 @@ namespace Offliine.Cafiine
                                 if (reader.ReadByte() != 0) throw new InvalidDataException();
                                 var mode = reader.ReadString(Encoding.ASCII, lenMode - 1);
                                 if (reader.ReadByte() != 0) throw new InvalidDataException();
-                                if (File.Exists(localRoot + path))
+                                if (new File(localRoot, path).Exists())
                                 {
                                     var handle = -1;
                                     for (var i = 0; i < files.Length; i++)
@@ -166,10 +169,9 @@ namespace Offliine.Cafiine
                                     writer.Write(0);
                                     writer.Write(0x0fff00ff | (handle << 8));
                                 }
-                                else if (File.Exists(localRoot + path + "-request") ||
-                                         (requestSlow = File.Exists(localRoot + path + "-request_slow")))
+                                else if (new File(localRoot, path + "-request").Exists() || (requestSlow = new File(localRoot, path + "-request_slow").Exists()))
                                 {
-                                    if (!File.Exists(localRoot + path + "-dump"))
+                                    if (new File(localRoot, path + "-dump").Exists())
                                     {
                                         writer.Write(!requestSlow ? BYTE_REQUEST : BYTE_REQUEST_SLOW);
                                     }
