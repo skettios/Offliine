@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.IO
+namespace Offliine.Cafiine
 {
-    sealed class EndianBinaryReader : IDisposable
+    sealed class EndianBinaryWriter : IDisposable
     {
         private bool disposed;
         private byte[] buffer;
@@ -20,40 +22,26 @@ namespace System.IO
 
         private bool Reverse { get { return SystemEndianness != Endianness; } }
 
-        public EndianBinaryReader(Stream baseStream)
+        public EndianBinaryWriter(Stream baseStream)
             : this(baseStream, Endianness.BigEndian)
         { }
 
-        public EndianBinaryReader(Stream baseStream, Endianness endianness)
+        public EndianBinaryWriter(Stream baseStream, Endianness endianness)
         {
             if (baseStream == null) throw new ArgumentNullException("baseStream");
-            if (!baseStream.CanRead) throw new ArgumentException("base stream is not readable.", "baseStream");
+            if (!baseStream.CanWrite) throw new ArgumentException("base stream is not writeable", "baseStream");
 
             BaseStream = baseStream;
             Endianness = endianness;
         }
 
-        ~EndianBinaryReader()
+        ~EndianBinaryWriter()
         {
             Dispose(false);
         }
 
-        /// <summary>
-        /// Fills the buffer with bytes bytes, possibly reversing every stride. Bytes must be a multiple of stide. Stide must be 1 or 2 or 4 or 8.
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <param name="stride"></param>
-        private void FillBuffer(int bytes, int stride)
+        private void WriteBuffer(int bytes, int stride)
         {
-            if (buffer == null || buffer.Length < bytes)
-                buffer = new byte[bytes];
-
-            for (int i = 0, read = 0; i < bytes; i += read)
-            {
-                read = BaseStream.Read(buffer, i, bytes - i);
-                if (read <= 0) throw new EndOfStreamException();
-            }
-
             if (Reverse)
             {
                 if (fastReverse[stride] != null)
@@ -64,6 +52,8 @@ namespace System.IO
                         Array.Reverse(buffer, i, stride);
                     }
             }
+
+            BaseStream.Write(buffer, 0, bytes);
         }
 
         private static void ArrayReverse2(byte[] array, int arrayLength)
@@ -117,71 +107,73 @@ namespace System.IO
             }
         }
 
-        public byte ReadByte()
+        private void CreateBuffer(int size)
         {
-            FillBuffer(1, 1);
-
-            return buffer[0];
+            if (buffer == null || buffer.Length < size)
+                buffer = new byte[size];
         }
 
-        public byte[] ReadBytes(int count)
+        public void Write(byte value)
         {
-            byte[] temp;
-
-            FillBuffer(count, 1);
-            temp = new byte[count];
-            Array.Copy(buffer, 0, temp, 0, count);
-            return temp;
+            CreateBuffer(1);
+            buffer[0] = value;
+            WriteBuffer(1, 1);
         }
 
-        public sbyte ReadSByte()
+        public void Write(byte[] value, int offset, int count)
         {
-            FillBuffer(1, 1);
+            CreateBuffer(count);
+            Array.Copy(value, offset, buffer, 0, count);
+            WriteBuffer(count, 1);
+        }
 
+        public void Write(sbyte value)
+        {
+            CreateBuffer(1);
             unchecked
             {
-                return (sbyte)buffer[0];
+                buffer[0] = (byte)value;
             }
+            WriteBuffer(1, 1);
         }
 
-        public sbyte[] ReadSBytes(int count)
+        public void Write(sbyte[] value, int offset, int count)
         {
-            sbyte[] temp;
-
-            temp = new sbyte[count];
-            FillBuffer(count, 1);
+            CreateBuffer(count);
 
             unchecked
             {
                 for (int i = 0; i < count; i++)
                 {
-                    temp[i] = (sbyte)buffer[i];
+                    buffer[i] = (byte)value[i + offset];
                 }
             }
 
-            return temp;
+            WriteBuffer(count, 1);
         }
 
-        public char ReadChar(Encoding encoding)
+        public void Write(char value, Encoding encoding)
         {
             int size;
 
             if (encoding == null) throw new ArgumentNullException("encoding");
 
             size = GetEncodingSize(encoding);
-            FillBuffer(size, size);
-            return encoding.GetChars(buffer, 0, size)[0];
+            CreateBuffer(size);
+            Array.Copy(encoding.GetBytes(new string(value, 1)), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public char[] ReadChars(Encoding encoding, int count)
+        public void Write(char[] value, int offset, int count, Encoding encoding)
         {
             int size;
 
             if (encoding == null) throw new ArgumentNullException("encoding");
 
             size = GetEncodingSize(encoding);
-            FillBuffer(size * count, size);
-            return encoding.GetChars(buffer, 0, size * count);
+            CreateBuffer(size * count);
+            Array.Copy(encoding.GetBytes(value, offset, count), 0, buffer, 0, count * size);
+            WriteBuffer(size * count, size);
         }
 
         private static int GetEncodingSize(Encoding encoding)
@@ -194,199 +186,212 @@ namespace System.IO
             return 1;
         }
 
-        public string ReadStringNT(Encoding encoding)
+        public void Write(string value,Encoding encoding,  bool nullTerminated)
         {
-            string text;
-
-            text = "";
-
-            do
-            {
-                text += ReadChar(encoding);
-            } while (!text.EndsWith("\0", StringComparison.Ordinal));
-
-            return text.Remove(text.Length - 1);
+            Write(value.ToCharArray(), 0, value.Length, encoding);
+            if (nullTerminated)
+                Write('\0', encoding);
         }
 
-        public string ReadString(Encoding encoding, int count)
-        {
-            return new string(ReadChars(encoding, count));
-        }
-
-        public double ReadDouble()
+        public void Write(double value)
         {
             const int size = sizeof(double);
-            FillBuffer(size, size);
-            return BitConverter.ToDouble(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public double[] ReadDoubles(int count)
+        public void Write(double[] value, int offset, int count)
         {
             const int size = sizeof(double);
-            double[] temp;
 
-            temp = new double[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToDouble(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
         }
 
-        public Single ReadSingle()
+        public void Write(Single value)
         {
             const int size = sizeof(Single);
-            FillBuffer(size, size);
-            return BitConverter.ToSingle(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public Single[] ReadSingles(int count)
+        public void Write(Single[] value, int offset, int count)
         {
             const int size = sizeof(Single);
-            Single[] temp;
 
-            temp = new Single[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToSingle(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
         }
 
-        public Int32 ReadInt32()
+        public void Write(Int32 value)
         {
             const int size = sizeof(Int32);
-            FillBuffer(size, size);
-            return BitConverter.ToInt32(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public Int32[] ReadInt32s(int count)
+        public void Write(Int32[] value, int offset, int count)
         {
             const int size = sizeof(Int32);
-            Int32[] temp;
 
-            temp = new Int32[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToInt32(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
         }
 
-        public Int64 ReadInt64()
+        public void Write(Int64 value)
         {
             const int size = sizeof(Int64);
-            FillBuffer(size, size);
-            return BitConverter.ToInt64(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public Int64[] ReadInt64s(int count)
+        public void Write(Int64[] value, int offset, int count)
         {
             const int size = sizeof(Int64);
-            Int64[] temp;
 
-            temp = new Int64[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToInt64(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
         }
 
-        public Int16 ReadInt16()
+        public void Write(Int16 value)
         {
             const int size = sizeof(Int16);
-            FillBuffer(size, size);
-            return BitConverter.ToInt16(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public Int16[] ReadInt16s(int count)
+        public void Write(Int16[] value, int offset, int count)
         {
             const int size = sizeof(Int16);
-            Int16[] temp;
 
-            temp = new Int16[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToInt16(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
         }
 
-        public UInt16 ReadUInt16()
+        public void Write(UInt16 value)
         {
             const int size = sizeof(UInt16);
-            FillBuffer(size, size);
-            return BitConverter.ToUInt16(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public UInt16[] ReadUInt16s(int count)
+        public void Write(UInt16[] value, int offset, int count)
         {
             const int size = sizeof(UInt16);
-            UInt16[] temp;
 
-            temp = new UInt16[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToUInt16(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
         }
 
-        public UInt32 ReadUInt32()
+        public void Write(UInt32 value)
         {
             const int size = sizeof(UInt32);
-            FillBuffer(size, size);
-            return BitConverter.ToUInt32(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public UInt32[] ReadUInt32s(int count)
+        public void Write(UInt32[] value, int offset, int count)
         {
             const int size = sizeof(UInt32);
-            UInt32[] temp;
 
-            temp = new UInt32[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToUInt32(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
         }
 
-        public UInt64 ReadUInt64()
+        public void Write(UInt64 value)
         {
             const int size = sizeof(UInt64);
-            FillBuffer(size, size);
-            return BitConverter.ToUInt64(buffer, 0);
+
+            CreateBuffer(size);
+            Array.Copy(BitConverter.GetBytes(value), 0, buffer, 0, size);
+            WriteBuffer(size, size);
         }
 
-        public UInt64[] ReadUInt64s(int count)
+        public void Write(UInt64[] value, int offset, int count)
         {
             const int size = sizeof(UInt64);
-            UInt64[] temp;
 
-            temp = new UInt64[count];
-            FillBuffer(size * count, size);
-
+            CreateBuffer(size * count);
             for (int i = 0; i < count; i++)
             {
-                temp[i] = BitConverter.ToUInt64(buffer, size * i);
+                Array.Copy(BitConverter.GetBytes(value[i + offset]), 0, buffer, i * size, size);
             }
-            return temp;
+
+            WriteBuffer(size * count, size);
+        }
+
+        public void WritePadding(int multiple, byte padding)
+        {
+            int length = (int)(BaseStream.Position % multiple);
+
+            if (length != 0)
+                while (length != multiple)
+                {
+                    BaseStream.WriteByte(padding);
+                    length++;
+                }
+        }
+
+        public void WritePadding(int multiple, byte padding, long from, int offset)
+        {
+            int length = (int)((BaseStream.Position - from) % multiple);
+            length = (length + offset) % multiple;
+
+            if (length != 0)
+                while (length != multiple)
+                {
+                    BaseStream.WriteByte(padding);
+                    length++;
+                }
         }
 
         private List<Tuple<int, TypeCode>> GetParser(Type type)
@@ -529,7 +534,7 @@ namespace System.IO
             return parser;
         }
 
-        private void RunParser(List<Tuple<int, TypeCode>> parser, BinaryWriter wr)
+        private void RunParser(List<Tuple<int, TypeCode>> parser, BinaryReader rd)
         {
             foreach (var item in parser)
             {
@@ -538,28 +543,28 @@ namespace System.IO
                 {
                     case TypeCode.Byte:
                     case TypeCode.SByte:
-                        wr.Write(ReadBytes(item.Item1), 0, item.Item1);
+                        Write(rd.ReadBytes(item.Item1), 0, item.Item1);
                         break;
                     case TypeCode.Int16:
                     case TypeCode.UInt16:
-                        foreach (var val in ReadInt16s(item.Item1))
-                            wr.Write(val);
+                        for (int i = 0; i < item.Item1; i++)
+                            Write(rd.ReadInt16());
                         break;
                     case TypeCode.Int32:
                     case TypeCode.UInt32:
                     case TypeCode.Single:
-                        foreach (var val in ReadInt32s(item.Item1))
-                            wr.Write(val);
+                        for (int i = 0; i < item.Item1; i++)
+                            Write(rd.ReadInt32());
                         break;
                     case TypeCode.Int64:
                     case TypeCode.UInt64:
                     case TypeCode.Double:
-                        foreach (var val in ReadInt64s(item.Item1))
-                            wr.Write(val);
+                        for (int i = 0; i < item.Item1; i++)
+                            Write(rd.ReadInt64());
                         break;
                     case TypeCode.Empty:
+                        rd.BaseStream.Seek(item.Item1, SeekOrigin.Current);
                         BaseStream.Seek(item.Item1, SeekOrigin.Current);
-                        wr.BaseStream.Seek(item.Item1, SeekOrigin.Current);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -567,46 +572,48 @@ namespace System.IO
             }
         }
 
-        public object ReadStructure(Type type)
+        public void Write(object structure)
         {
             List<Tuple<int, TypeCode>> parser;
-            object result;
+            Type type;
+            byte[] data;
 
+            type = structure.GetType();
             parser = GetParser(type);
+            data = new byte[Marshal.SizeOf(type)];
 
-            using (var ms = new MemoryStream())
+            using (var ms = new MemoryStream(data))
             {
-                using (var wr = new BinaryWriter(ms))
+                using (var rd = new BinaryReader(ms))
                 {
-                    RunParser(parser, wr);
+                    Marshal.StructureToPtr(structure, Marshal.UnsafeAddrOfPinnedArrayElement(data, 0), true);
+                    RunParser(parser, rd);
                 }
-                result = Marshal.PtrToStructure(Marshal.UnsafeAddrOfPinnedArrayElement(ms.ToArray(), 0), type);
             }
-            return result;
         }
 
-        public Array ReadStructures(Type type, int count)
+        public void Write(Array structures)
         {
             List<Tuple<int, TypeCode>> parser;
-            Array result;
+            Type type;
+            byte[] data;
 
+            type = structures.GetType().GetElementType();
             parser = GetParser(type);
+            data = new byte[Marshal.SizeOf(type)];
 
-            result = Array.CreateInstance(type, count);
-
-            using (var ms = new MemoryStream())
+            using (var ms = new MemoryStream(data))
             {
-                using (var wr = new BinaryWriter(ms))
+                using (var rd = new BinaryReader(ms))
                 {
-                    for (int i = 0; i < count; i++)
+                    foreach (var structure in structures)
                     {
                         ms.Seek(0, SeekOrigin.Begin);
-                        RunParser(parser, wr);
-                        result.SetValue(Marshal.PtrToStructure(Marshal.UnsafeAddrOfPinnedArrayElement(ms.ToArray(), 0), type), i);
+                        Marshal.StructureToPtr(structure, Marshal.UnsafeAddrOfPinnedArrayElement(data, 0), true);
+                        RunParser(parser, rd);
                     }
                 }
             }
-            return result;
         }
 
         public void Close()
@@ -634,11 +641,5 @@ namespace System.IO
                 disposed = true;
             }
         }
-    }
-
-    enum Endianness
-    {
-        BigEndian,
-        LittleEndian,
     }
 }

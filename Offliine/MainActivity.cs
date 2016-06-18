@@ -1,7 +1,8 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using Android;
 using Android.App;
 using Android.Content.PM;
@@ -23,6 +24,9 @@ namespace Offliine
         public static File Payloads = new File(ExternalStorage, "Payloads");
         public static File Loaders = new File(ExternalStorage, "Loaders");
         public static string IpAddress;
+
+        public static Dictionary<string, string> PayloadNames = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> FoundPayloads = new Dictionary<string, List<string>>();
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -46,6 +50,8 @@ namespace Offliine
 
             _copyRequired();
 
+            DiscoverPayloads();
+
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
@@ -57,7 +63,7 @@ namespace Offliine
             }
 
             var view = FindViewById<TextView>(Resource.Id.IpAddressText);
-            view.Text = "IP Address\n" + IpAddress + ":1337/hax";
+            view.Text = "IP Address\n" + IpAddress + ":1337";
             view.Gravity = GravityFlags.Center;
 
             var offline = FindViewById<Button>(Resource.Id.OffliineButton);
@@ -93,13 +99,11 @@ namespace Offliine
                 var rootAssetList = assetManager.List("");
                 foreach (var s in rootAssetList)
                 {
-                    if (s.Equals("Loaders") || s.Equals("Payloads"))
+                    if (s.Equals("Loaders"))
                     {
                         var folder = new File(ExternalStorage, s);
                         if (!folder.Exists())
                             folder.Mkdir();
-                        else
-                            continue;
 
                         var innerAssetList = assetManager.List(s);
                         foreach (var name in innerAssetList)
@@ -112,11 +116,62 @@ namespace Offliine
                             input.Close();
                         }
                     }
+                    else if (s.Equals("Payloads"))
+                    {
+                        var folder = new File(ExternalStorage, s);
+                        if (!folder.Exists())
+                            folder.Mkdir();
+                        else
+                            continue;
+
+                        var innerAssetList = assetManager.List(s);
+                        foreach (var name in innerAssetList)
+                        {
+                            if (name.Equals("hbl_Homebrew Launcher") || name.Equals("loadiine_Loadiine") || name.Equals("ksploit_Kernel Exploit") || name.Equals("cafiine_Cafiine"))
+                            {
+                                var payloadFolder = new File(folder, name);
+                                if (!payloadFolder.Exists())
+                                    payloadFolder.Mkdir();
+
+                                var innerInnerAssetList = assetManager.List(s + "/" + name);
+                                foreach (var file in innerInnerAssetList)
+                                {
+                                    var input = assetManager.Open(s + "/" + name + "/" + file);
+                                    var output = System.IO.File.Create(payloadFolder + "/" + file);
+                                    input.CopyTo(output);
+                                    output.Flush();
+                                    output.Close();
+                                    input.Close();
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception e)
             {
                 Log.Debug("Offliine", e.Message);
+            }
+        }
+
+        public static void DiscoverPayloads()
+        {
+            foreach (var folder in Payloads.ListFiles())
+            {
+                var match = Regex.Match(folder.Name, "[a-zA-Z]_[a-zA-Z]", RegexOptions.IgnoreCase);
+                if (match.Success)
+                {
+                    var path = folder.Name.Substring(0, folder.Name.IndexOf('_'));
+                    var name = folder.Name.Substring(folder.Name.IndexOf('_') + 1);
+                    PayloadNames.Add(path, name);
+
+                    var payloads = folder.ListFiles();
+                    var foundPayloads = new List<string>();
+                    foreach (var payload in payloads)
+                        foundPayloads.Add(payload.Name);
+
+                    FoundPayloads.Add(path, foundPayloads);
+                }
             }
         }
     }
