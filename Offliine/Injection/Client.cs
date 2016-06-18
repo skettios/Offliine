@@ -11,8 +11,8 @@ namespace Offliine.Injection
 {
     public class Client
     {
-        private Socket _socket;
-        private string _threadName;
+        private readonly Socket _socket;
+        private readonly string _threadName;
 
         public Client(Socket socket, string threadName)
         {
@@ -36,27 +36,24 @@ namespace Offliine.Injection
 
                 var input = _socket.InputStream;
                 var output = _socket.OutputStream;
-                var header = GetRequest(input);
+                var header = _getRequest(input);
                 var path = header.Path;
 
                 var version = SystemVersions.GetSystemVersion(header.GetPropriety("User-Agent"));
 
                 if (version != null)
                 {
-                    if (path.IndexOf("?") != -1)
+                    if (path.Equals("/"))
                     {
-                        var payload = path.Substring(path.IndexOf("?") + 1);
-                        Log.Debug("Offliine", payload);
-                        if (payload.Equals("hbl"))
-                            Serve(version, output, "hbl" + version.PayloadVersion + ".bin");
-                        else if (payload.Equals("loadiine"))
-                            Serve(version, output, "loadiine" + version.PayloadVersion + ".bin");
-                        else
-                            Serve(version, output, payload + ".bin");
+                        _serveWebPage(output, version);
                     }
                     else
                     {
-                        Serve(version, output, "hbl" + version.PayloadVersion + ".bin");
+                        var fixedPath = path.Substring(path.IndexOf('/') + 1);
+                        if (fixedPath.Equals("cafiine") && (version == SystemVersions.Us540 || version == SystemVersions.Eu540 || version == SystemVersions.Jp540))
+                            _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[1] + ".bin");
+                        else
+                            _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[0] + ".bin");
                     }
                 }
 
@@ -73,7 +70,7 @@ namespace Offliine.Injection
             }
         }
 
-        private void WriteHeader(Writer writer, string contentType)
+        private void _writeHeader(Writer writer, string contentType)
         {
             writer.Write("HTTP/1.1 200 OK\r\n");
             if (contentType != null)
@@ -90,20 +87,38 @@ namespace Offliine.Injection
             writer.Flush();
         }
 
-        private void Serve(SystemVersion version, Stream output, string payloadName)
+        private void _serveWebPage(Stream output, SystemVersion version)
+        {
+            var writer = new OutputStreamWriter(output);
+
+            HtmlHelper.BeginHtml(writer);
+            HtmlHelper.BeginBody(writer);
+            HtmlHelper.CreateHeader1(writer, "Offliine");
+            foreach (var payload in MainActivity.PayloadNames)
+            {
+                if (MainActivity.FoundPayloads[payload.Key].Contains(version.PayloadVersions[0] + ".bin"))
+                    HtmlHelper.CreateButton(writer, payload.Key, payload.Value);
+            }
+            HtmlHelper.EndBody(writer);
+            HtmlHelper.EndHtml(writer);
+
+            writer.Flush();
+        }
+
+        private void _serveHax(SystemVersion version, Stream output, string payloadName)
         {
             var writer = new BufferedWriter(new OutputStreamWriter(output));
 
-            WriteHeader(writer, "video/mp4");
+            _writeHeader(writer, "video/mp4");
             if (StageFright.Serve(new OutputStreamAdapter(output), version, payloadName))
             {
-                Log.Debug("Offliine", "SUCCESS");
+                Log.Debug("Offliine", payloadName);
             }
 
             writer.Close();
         }
 
-        private HTTPRequest GetRequest(Stream input)
+        private HTTPRequest _getRequest(Stream input)
         {
             var reader = new BufferedReader(new InputStreamReader(input));
 
@@ -114,7 +129,7 @@ namespace Offliine.Injection
             var path = splitLine[1].Trim();
             var protocol = splitLine[2].Trim();
 
-            List<HTTPPropriety> props = new List<HTTPPropriety>();
+            var props = new List<HTTPPropriety>();
             for (line = reader.ReadLine(); !string.IsNullOrEmpty(line); line = reader.ReadLine())
             {
                 splitLine = line.Split(new[] {':'}, 2);

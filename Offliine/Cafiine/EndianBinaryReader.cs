@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.IO
+namespace Offliine.Cafiine
 {
     sealed class EndianBinaryReader : IDisposable
     {

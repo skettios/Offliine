@@ -65,8 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cafiine\Server.cs" />
-    <Compile Include="Cafiine\System\EndianBinaryReader.cs" />
-    <Compile Include="Cafiine\System\EndianBinaryWriter.cs" />
+    <Compile Include="Cafiine\EndianBinaryReader.cs" />
+    <Compile Include="Cafiine\EndianBinaryWriter.cs" />
+    <Compile Include="HtmlHelper.cs" />
     <Compile Include="Injection\Client.cs" />
     <Compile Include="Injection\IConstants.cs" />
     <Compile Include="Injection\HTTPPropriety.cs" />
@@ -83,12 +84,14 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Loaders\stagefright.bin" />
-    <AndroidAsset Include="Assets\Payloads\cafiine.bin" />
-    <AndroidAsset Include="Assets\Payloads\hbl532.bin" />
-    <AndroidAsset Include="Assets\Payloads\hbl550.bin" />
-    <AndroidAsset Include="Assets\Payloads\kexploit.bin" />
-    <AndroidAsset Include="Assets\Payloads\loadiine532.bin" />
-    <AndroidAsset Include="Assets\Payloads\loadiine550.bin" />
+    <AndroidAsset Include="Assets\Payloads\hbl_Homebrew Launcher\532.bin" />
+    <AndroidAsset Include="Assets\Payloads\hbl_Homebrew Launcher\550.bin" />
+    <AndroidAsset Include="Assets\Payloads\ksploit_Kernel Exploit\550.bin" />
+    <AndroidAsset Include="Assets\Payloads\loadiine_Loadiine\532.bin" />
+    <AndroidAsset Include="Assets\Payloads\loadiine_Loadiine\550.bin" />
+    <AndroidAsset Include="Assets\Payloads\ksploit_Kernel Exploit\532.bin" />
+    <AndroidAsset Include="Assets\Payloads\cafiine_Cafiine\532.bin" />
+    <AndroidAsset Include="Assets\Payloads\cafiine_Cafiine\550.bin" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
@@ -104,6 +107,7 @@
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
      Other similar extension points exist, see Microsoft.Common.targets.
