@@ -92,6 +92,7 @@
     <AndroidAsset Include="Assets\Payloads\ksploit_Kernel Exploit\532.bin" />
     <AndroidAsset Include="Assets\Payloads\cafiine_Cafiine\532.bin" />
     <AndroidAsset Include="Assets\Payloads\cafiine_Cafiine\550.bin" />
+    <AndroidAsset Include="Assets\Payloads\cafiine_Cafiine\540.bin" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
