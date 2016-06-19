@@ -28,10 +28,17 @@ namespace Offliine
         public static Dictionary<string, string> PayloadNames = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> FoundPayloads = new Dictionary<string, List<string>>();
 
+        private PowerManager.WakeLock _wakeLock;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.Main);
+
+            var pm = (PowerManager) GetSystemService(PowerService);
+            _wakeLock = pm.NewWakeLock(WakeLockFlags.Partial, "Offliine");
+
+            _wakeLock.Acquire();
 
             if ((int) Build.VERSION.SdkInt >= 24)
             {
@@ -40,6 +47,9 @@ namespace Offliine
 
                 if (CheckSelfPermission(Manifest.Permission.WriteExternalStorage) != Permission.Granted)
                     RequestPermissions(new[] {Manifest.Permission.WriteExternalStorage}, 1);
+
+                if (CheckSelfPermission(Manifest.Permission.WakeLock) != Permission.Granted)
+                    RequestPermissions(new[] {Manifest.Permission.WakeLock}, 1);
             }
 
             if (!ExternalStorage.Exists())
@@ -89,6 +99,13 @@ namespace Offliine
                 var server = new Cafiine.Server();
                 server.Start();
             };
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            _wakeLock.Release();
         }
 
         private void _copyRequired()

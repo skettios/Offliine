@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
+using Android.Content;
+using Android.OS;
 using Android.Util;
 using Console = System.Console;
 using File = Java.IO.File;

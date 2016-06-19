@@ -1,3 +1,5 @@
+using Android.Content;
+using Android.OS;
 using Android.Util;
 using Java.Lang;
 using Java.Net;
