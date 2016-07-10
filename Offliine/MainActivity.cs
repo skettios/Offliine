@@ -166,9 +166,6 @@ namespace Offliine
 
         private void _copyRequired()
         {
-            if (ExternalStorage.Exists())
-                return;
-
             try
             {
                 var assetManager = Assets;
@@ -180,6 +177,8 @@ namespace Offliine
                         var folder = new File(ExternalStorage, s);
                         if (!folder.Exists())
                             folder.Mkdir();
+                        else
+                            continue;
 
                         var innerAssetList = assetManager.List(s);
                         foreach (var name in innerAssetList)
@@ -208,6 +207,8 @@ namespace Offliine
                                 var payloadFolder = new File(folder, name);
                                 if (!payloadFolder.Exists())
                                     payloadFolder.Mkdir();
+                                else
+                                    continue;
 
                                 var innerInnerAssetList = assetManager.List(s + "/" + name);
                                 foreach (var file in innerInnerAssetList)
