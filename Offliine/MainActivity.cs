@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Android;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Java.IO;
+using Offliine.Cafiine;
+using Offliine.Injection;
 using Environment = Android.OS.Environment;
-using File = Java.IO.File;
 
 namespace Offliine
 {
@@ -28,28 +32,24 @@ namespace Offliine
         public static Dictionary<string, string> PayloadNames = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> FoundPayloads = new Dictionary<string, List<string>>();
 
-        private PowerManager.WakeLock _wakeLock;
+        private bool _injectionRunning = false;
+        private Intent _injection;
+
+        private bool _cafiineRunning = false;
+        private Intent _cafiine;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.Main);
 
-            var pm = (PowerManager) GetSystemService(PowerService);
-            _wakeLock = pm.NewWakeLock(WakeLockFlags.Partial, "Offliine");
-
-            _wakeLock.Acquire();
-
-            if ((int) Build.VERSION.SdkInt >= 24)
+            if ((int) Build.VERSION.SdkInt >= 23)
             {
                 if (CheckSelfPermission(Manifest.Permission.Internet) != Permission.Granted)
                     RequestPermissions(new[] {Manifest.Permission.Internet}, 1);
 
                 if (CheckSelfPermission(Manifest.Permission.WriteExternalStorage) != Permission.Granted)
                     RequestPermissions(new[] {Manifest.Permission.WriteExternalStorage}, 1);
-
-                if (CheckSelfPermission(Manifest.Permission.WakeLock) != Permission.Granted)
-                    RequestPermissions(new[] {Manifest.Permission.WakeLock}, 1);
             }
 
             if (!ExternalStorage.Exists())
@@ -72,40 +72,96 @@ namespace Offliine
                 }
             }
 
+            _injection = new Intent(this, typeof(InjectionService));
+            _cafiine = new Intent(this, typeof(CafiineService));
+
             var view = FindViewById<TextView>(Resource.Id.IpAddressText);
             view.Text = "IP Address\n" + IpAddress + ":1337";
             view.Gravity = GravityFlags.Center;
 
-            var offline = FindViewById<Button>(Resource.Id.OffliineButton);
-            offline.SetTextColor(Color.Red);
-            offline.Click += delegate
+            var offliine = FindViewById<Button>(Resource.Id.OffliineButton);
+            offliine.SetTextColor(Color.Red);
+            offliine.Click += (sender, args) =>
             {
-                offline.Enabled = false;
-                offline.SetTextColor(Color.Green);
-                offline.Text = "Offliine: ON";
+                if (!_injectionRunning)
+                {
+                    _injectionRunning = true;
 
-                var server = new Injection.Server();
-                server.Start();
+                    offliine.Enabled = false;
+                    offliine.SetTextColor(Color.Green);
+                    offliine.Text = "Offliine: ON";
+
+                    new Timer(o =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            offliine.Enabled = true;
+                        });
+                    }, null, 60000, 0);
+
+                    StartService(_injection);
+                }
+                else
+                {
+                    _injectionRunning = false;
+
+                    offliine.Enabled = false;
+                    offliine.SetTextColor(Color.Red);
+                    offliine.Text = "Offliine: OFF";
+
+                    new Timer(o =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            offliine.Enabled = true;
+                        });
+                    }, null, 60000, 0);
+
+                    StopService(_injection);
+                }
             };
 
             var cafiine = FindViewById<Button>(Resource.Id.CafiineButton);
             cafiine.SetTextColor(Color.Red);
             cafiine.Click += delegate
             {
-                cafiine.Enabled = false;
-                cafiine.SetTextColor(Color.Green);
-                cafiine.Text = "Cafiine: ON";
+                if (!_cafiineRunning)
+                {
+                    _cafiineRunning = true;
 
-                var server = new Cafiine.Server();
-                server.Start();
+                    cafiine.Enabled = false;
+                    cafiine.SetTextColor(Color.Green);
+                    cafiine.Text = "Cafiine: ON";
+
+                    new Timer(o =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            cafiine.Enabled = true;
+                        });
+                    }, null, 60000, 0);
+
+                    StartService(_cafiine);
+                }
+                else
+                {
+                    _cafiineRunning = false;
+
+                    cafiine.Enabled = false;
+                    cafiine.SetTextColor(Color.Red);
+                    cafiine.Text = "Cafiine: OFF";
+
+                    new Timer(o =>
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            cafiine.Enabled = true;
+                        });
+                    }, null, 60000, 0);
+
+                    StopService(_cafiine);
+                }
             };
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-
-            _wakeLock.Release();
         }
 
         private void _copyRequired()
@@ -121,6 +177,8 @@ namespace Offliine
                         var folder = new File(ExternalStorage, s);
                         if (!folder.Exists())
                             folder.Mkdir();
+                        else
+                            continue;
 
                         var innerAssetList = assetManager.List(s);
                         foreach (var name in innerAssetList)
@@ -149,6 +207,8 @@ namespace Offliine
                                 var payloadFolder = new File(folder, name);
                                 if (!payloadFolder.Exists())
                                     payloadFolder.Mkdir();
+                                else
+                                    continue;
 
                                 var innerInnerAssetList = assetManager.List(s + "/" + name);
                                 foreach (var file in innerInnerAssetList)
@@ -190,6 +250,17 @@ namespace Offliine
                     FoundPayloads.Add(path, foundPayloads);
                 }
             }
+        }
+
+        protected override void OnDestroy()
+        {
+            if (_injectionRunning)
+                StopService(_injection);
+
+            if (_cafiineRunning)
+                StopService(_cafiine);
+
+            base.OnDestroy();
         }
     }
 }

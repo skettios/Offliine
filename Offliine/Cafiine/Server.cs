@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
-using Android.Content;
-using Android.OS;
 using Android.Util;
 using Console = System.Console;
 using File = Java.IO.File;
@@ -74,26 +72,33 @@ namespace Offliine.Cafiine
         }
 
         private File _root = MainActivity.Cafiine;
+        private Thread _thread;
+        private TcpListener _server;
 
         public void Start()
         {
-            var thread = new System.Threading.Thread(Run);
-            thread.Start();
+            _thread = new System.Threading.Thread(Run);
+            _thread.Start();
+        }
+
+        public void Stop()
+        {
+            _server.Stop();
+            _thread.Abort();
         }
 
         public void Run()
         {
-            var name = "[listener]";
             try
             {
-                var listener = new TcpListener(IPAddress.Any, 7332);
-                listener.Start();
-                Console.WriteLine(name + " Listening on 7332");
+                _server = new TcpListener(IPAddress.Any, 7332);
+                _server.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _server.Start();
 
                 var index = 0;
                 while (true)
                 {
-                    var client = listener.AcceptTcpClient();
+                    var client = _server.AcceptTcpClient();
                     var thread = new Thread(_handle) {Name = "[" + index.ToString() + "]"};
                     thread.Start(client);
                     index++;
@@ -101,7 +106,7 @@ namespace Offliine.Cafiine
             }
             catch (Exception e)
             {
-                Console.WriteLine(name + " " + e.Message);
+                Log.Info("Cafiine", e.Message);
             }
         }
 

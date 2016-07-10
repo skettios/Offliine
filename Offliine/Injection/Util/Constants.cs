@@ -1,4 +1,4 @@
-namespace Offliine.Injection
+namespace Offliine.Injection.Util
 {
     public class Constants
     {

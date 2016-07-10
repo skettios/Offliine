@@ -1,6 +1,4 @@
-using Android.Hardware.Camera2;
-
-namespace Offliine.Injection
+namespace Offliine.Injection.Http
 {
     public class HTTPPropriety
     {
