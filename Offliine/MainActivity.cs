@@ -97,7 +97,7 @@ namespace Offliine
                         {
                             offliine.Enabled = true;
                         });
-                    }, null, 10000, 0);
+                    }, null, 60000, 0);
 
                     StartService(_injection);
                 }
@@ -115,7 +115,7 @@ namespace Offliine
                         {
                             offliine.Enabled = true;
                         });
-                    }, null, 10000, 0);
+                    }, null, 60000, 0);
 
                     StopService(_injection);
                 }
@@ -139,7 +139,7 @@ namespace Offliine
                         {
                             cafiine.Enabled = true;
                         });
-                    }, null, 10000, 0);
+                    }, null, 60000, 0);
 
                     StartService(_cafiine);
                 }
@@ -157,7 +157,7 @@ namespace Offliine
                         {
                             cafiine.Enabled = true;
                         });
-                    }, null, 10000, 0);
+                    }, null, 60000, 0);
 
                     StopService(_cafiine);
                 }

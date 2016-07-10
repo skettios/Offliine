@@ -97,11 +97,13 @@ namespace Offliine.Injection
             HtmlHelper.BeginHtml(writer);
             HtmlHelper.BeginBody(writer);
             HtmlHelper.CreateHeader1(writer, "Offliine");
+            HtmlHelper.BeginDiv(writer);
             foreach (var payload in MainActivity.PayloadNames)
             {
                 if (MainActivity.FoundPayloads[payload.Key].Contains(version.PayloadVersions[0] + ".bin"))
                     HtmlHelper.CreateButton(writer, payload.Key, payload.Value);
             }
+            HtmlHelper.EndDiv(writer);
             HtmlHelper.EndBody(writer);
             HtmlHelper.EndHtml(writer);
 
