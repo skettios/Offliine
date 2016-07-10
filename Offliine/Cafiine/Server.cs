@@ -75,6 +75,8 @@ namespace Offliine.Cafiine
         private Thread _thread;
         private TcpListener _server;
 
+        private bool _isRunning = false;
+
         public void Start()
         {
             _thread = new System.Threading.Thread(Run);
@@ -91,6 +93,8 @@ namespace Offliine.Cafiine
         {
             try
             {
+                Thread.Sleep(1000);
+
                 _server = new TcpListener(IPAddress.Any, 7332);
                 _server.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _server.Start();

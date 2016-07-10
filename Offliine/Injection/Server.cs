@@ -29,6 +29,8 @@ namespace Offliine.Injection
         {
             try
             {
+                Thread.Sleep(1000);
+
                 _server = new ServerSocket(1337) { ReceiveBufferSize = 50000, ReuseAddress = true };
 
                 while (_isRunning)
