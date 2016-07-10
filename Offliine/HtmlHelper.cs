@@ -1,11 +1,10 @@
-using System.IO;
 using Java.IO;
 
 namespace Offliine
 {
     public class HtmlHelper
     {
-        public static void BeginHtml(OutputStreamWriter writer)
+        public static void BeginHtml(Writer writer)
         {
             writer.Write("<head>");
             writer.Write("<style>");
@@ -16,19 +15,19 @@ namespace Offliine
             writer.Write("<html>");
         }
 
-        public static void BeginBody(OutputStreamWriter writer)
+        public static void BeginBody(Writer writer)
         {
             writer.Write("<body>");
         }
 
-        public static void CreateHeader1(OutputStreamWriter writer, string value)
+        public static void CreateHeader1(Writer writer, string value)
         {
             writer.Write("<h1>");
             writer.Write(value);
             writer.Write("</h1>");
         }
 
-        public static void CreateButton(OutputStreamWriter writer, string path, string name)
+        public static void CreateButton(Writer writer, string path, string name)
         {
             writer.Write("<button onclick=\"window.open(\'" + path + "\', \'_self\');\">");
             writer.Write(name);

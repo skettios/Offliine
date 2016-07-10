@@ -6,23 +6,24 @@ using Android.Runtime;
 using Android.Util;
 using Java.IO;
 using Java.Net;
+using Offliine.Injection.Exploit;
+using Offliine.Injection.Http;
+using Offliine.Injection.Util;
 
 namespace Offliine.Injection
 {
     public class Client
     {
         private readonly Socket _socket;
-        private readonly string _threadName;
 
-        public Client(Socket socket, string threadName)
+        public Client(Socket socket)
         {
             _socket = socket;
-            _threadName = threadName;
         }
 
         public void Start()
         {
-            var thread = new System.Threading.Thread(Run) {Name = _threadName};
+            var thread = new Thread(Run);
             Thread.Sleep(1000);
             thread.Start();
         }
@@ -31,43 +32,45 @@ namespace Offliine.Injection
         {
             try
             {
-                _socket.SendBufferSize = 50000;
-                _socket.ReceiveBufferSize = 50000;
-
-                var input = _socket.InputStream;
-                var output = _socket.OutputStream;
-                var header = _getRequest(input);
-                var path = header.Path;
-
-                var version = SystemVersions.GetSystemVersion(header.GetPropriety("User-Agent"));
-
-                if (version != null)
+                if (_socket.IsConnected)
                 {
-                    if (path.Equals("/"))
-                    {
-                        _serveWebPage(output, version);
-                    }
-                    else
-                    {
-                        var fixedPath = path.Substring(path.IndexOf('/') + 1);
-                        if (fixedPath.Equals("sdcafiine") && (version == SystemVersions.Us540 || version == SystemVersions.Eu540 || version == SystemVersions.Jp540))
-                            _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[1] + ".bin");
-                        else
-                            _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[0] + ".bin");
-                    }
-                }
+                    _socket.SendBufferSize = 50000;
+                    _socket.ReceiveBufferSize = 50000;
 
-                input.Close();
-                output.Close();
+                    var input = _socket.InputStream;
+                    var output = _socket.OutputStream;
+                    var header = _getRequest(input);
+                    var path = header.Path;
+
+                    var version = SystemVersions.GetSystemVersion(header.GetPropriety("User-Agent"));
+
+                    if (version != null)
+                    {
+                        if (path.Equals("/"))
+                        {
+                            _serveWebPage(output, version);
+                        }
+                        else
+                        {
+                            var fixedPath = path.Substring(path.IndexOf('/') + 1);
+                            if (fixedPath.Equals("sdcafiine") &&
+                                (version == SystemVersions.Us540 || version == SystemVersions.Eu540 || version == SystemVersions.Jp540))
+                                _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[1] + ".bin");
+                            else
+                                _serveHax(version, output, fixedPath + "_" + MainActivity.PayloadNames[fixedPath] + "/" + version.PayloadVersions[0] + ".bin");
+                        }
+                    }
+
+                    input.Close();
+                    output.Close();
+                }
             }
             catch (Exception e)
             {
                 Log.Debug("Offliine", e.Message);
             }
-            finally
-            {
-                _socket.Close();
-            }
+
+            _socket.Close();
         }
 
         private void _writeHeader(Writer writer, string contentType)

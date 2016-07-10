@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Offliine.Injection.Http;
 
-namespace Offliine.Injection
+namespace Offliine.Injection.Util
 {
     public class SystemVersions
     {

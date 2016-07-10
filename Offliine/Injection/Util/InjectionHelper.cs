@@ -2,12 +2,10 @@
 using System.Globalization;
 using Android.Util;
 using Java.IO;
-using Java.Lang;
-using Exception = System.Exception;
 
-namespace Offliine.Injection
+namespace Offliine.Injection.Util
 {
-    public class Util
+    public class InjectionHelper
     {
         public static void WriteU32(int value, OutputStream output)
         {

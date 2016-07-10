@@ -1,37 +1,41 @@
-using Android.Content;
-using Android.OS;
 using Android.Util;
 using Java.Lang;
 using Java.Net;
-using Exception = System.Exception;
 
 namespace Offliine.Injection
 {
     public class Server
     {
+        private Thread _thread;
+        private ServerSocket _server;
+
+        private bool _isRunning;
+
         public void Start()
         {
-            var thread = new System.Threading.Thread(Run);
-            thread.Start();
+            _isRunning = true;
+
+            _thread = new Thread(Run);
+            _thread.Start();
+        }
+
+        public void Stop()
+        {
+            _server.Close();
+            _isRunning = false;
         }
 
         public void Run()
         {
             try
             {
-                var server = new ServerSocket(1337) {ReceiveBufferSize = 50000};
+                _server = new ServerSocket(1337) { ReceiveBufferSize = 50000, ReuseAddress = true };
 
-                var clientCount = 0;
-
-                while (true)
+                while (_isRunning)
                 {
-                    var socket = server.Accept();
+                    var socket = _server.Accept();
 
-                    var builder = new StringBuilder();
-                    builder.Append("clientThread-");
-                    builder.Append(clientCount++);
-
-                    var client = new Client(socket, builder.ToString());
+                    var client = new Client(socket);
                     client.Start();
                 }
             }

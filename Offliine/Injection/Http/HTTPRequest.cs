@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Offliine.Injection
+namespace Offliine.Injection.Http
 {
     public class HTTPRequest
     {
