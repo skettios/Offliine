@@ -38,6 +38,8 @@ namespace Offliine
         private bool _cafiineRunning = false;
         private Intent _cafiine;
 
+        private PowerManager.WakeLock _wakeLock;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -71,6 +73,10 @@ namespace Offliine
                     break;
                 }
             }
+
+            var powerManager = (PowerManager)GetSystemService(PowerService);
+            _wakeLock = powerManager.NewWakeLock(WakeLockFlags.Partial, "Offliine-Wakelock");
+            _wakeLock.Acquire();
 
             _injection = new Intent(this, typeof(InjectionService));
             _cafiine = new Intent(this, typeof(CafiineService));
@@ -259,6 +265,8 @@ namespace Offliine
 
             if (_cafiineRunning)
                 StopService(_cafiine);
+
+            _wakeLock.Release();
 
             base.OnDestroy();
         }
