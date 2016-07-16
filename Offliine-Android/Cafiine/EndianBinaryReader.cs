@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Offliine.Cafiine
+namespace Offliine.Android.Cafiine
 {
     sealed class EndianBinaryReader : IDisposable
     {

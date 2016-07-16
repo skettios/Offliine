@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine", "Offliine\Offliine.csproj", "{B2693D5B-A8EA-47D0-B558-9B100AAFFCCA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Android", "Offliine-Android\Offliine-Android.csproj", "{B2693D5B-A8EA-47D0-B558-9B100AAFFCCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine", "Offliine\Offliine.csproj", "{8BFB5918-A546-47EF-8398-952495FB9688}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Windows", "Offliine-Windows\Offliine-Windows.csproj", "{73F2E338-050F-4B9A-AA2D-187D575AC0E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +21,14 @@ Global
 		{B2693D5B-A8EA-47D0-B558-9B100AAFFCCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2693D5B-A8EA-47D0-B558-9B100AAFFCCA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B2693D5B-A8EA-47D0-B558-9B100AAFFCCA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8BFB5918-A546-47EF-8398-952495FB9688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BFB5918-A546-47EF-8398-952495FB9688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BFB5918-A546-47EF-8398-952495FB9688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BFB5918-A546-47EF-8398-952495FB9688}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73F2E338-050F-4B9A-AA2D-187D575AC0E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73F2E338-050F-4B9A-AA2D-187D575AC0E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73F2E338-050F-4B9A-AA2D-187D575AC0E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73F2E338-050F-4B9A-AA2D-187D575AC0E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

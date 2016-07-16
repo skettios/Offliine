@@ -1,6 +1,6 @@
 using Java.IO;
 
-namespace Offliine
+namespace Offliine.Android
 {
     public class HtmlHelper
     {

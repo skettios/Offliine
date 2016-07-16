@@ -2,7 +2,7 @@ using Android.Util;
 using Java.Lang;
 using Java.Net;
 
-namespace Offliine.Injection
+namespace Offliine.Android.Injection
 {
     public class Server
     {

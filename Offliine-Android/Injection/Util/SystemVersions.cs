@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Offliine.Injection.Http;
+using Offliine.Android.Injection.Http;
 
-namespace Offliine.Injection.Util
+namespace Offliine.Android.Injection.Util
 {
     public class SystemVersions
     {
@@ -27,7 +27,7 @@ namespace Offliine.Injection.Util
             return ret;
         }
 
-        public static SystemVersion GetSystemVersion(HttpPropriety propriety)
+        public static SystemVersion GetSystemVersion(HTTPPropriety propriety)
         {
             if (propriety == null)
                 return null;

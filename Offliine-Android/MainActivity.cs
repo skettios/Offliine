@@ -14,11 +14,11 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.IO;
-using Offliine.Cafiine;
-using Offliine.Injection;
+using Offliine.Android.Cafiine;
+using Offliine.Android.Injection;
 using Environment = Android.OS.Environment;
 
-namespace Offliine
+namespace Offliine.Android
 {
     [Activity(Label = "Offliine", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity

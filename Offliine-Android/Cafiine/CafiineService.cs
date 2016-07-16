@@ -4,7 +4,7 @@ using Android.Graphics;
 using Android.OS;
 using Android.Widget;
 
-namespace Offliine.Cafiine
+namespace Offliine.Android.Cafiine
 {
     [Service]
     public class CafiineService : Service

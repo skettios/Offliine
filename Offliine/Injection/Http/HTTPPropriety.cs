@@ -1,10 +1,10 @@
-namespace Offliine.Injection.Http
+﻿namespace Offliine.Injection.Http
 {
-    public class HTTPPropriety
+    public class HttpPropriety
     {
         public string Key, Value;
 
-        public HTTPPropriety(string key, string value)
+        public HttpPropriety(string key, string value)
         {
             Key = key;
             Value = value;

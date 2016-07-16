@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace Offliine.Injection.Http
+namespace Offliine.Android.Injection.Http
 {
-    public class HttpRequest
+    public class HTTPRequest
     {
         public string Method, Protocol, Path;
-        public List<HttpPropriety> Proprieties;
+        public List<HTTPPropriety> Proprieties;
 
-        public HttpRequest(string method, string protocol, string path, List<HttpPropriety> proprieties)
+        public HTTPRequest(string method, string protocol, string path, List<HTTPPropriety> proprieties)
         {
             Method = method;
             Protocol = protocol;
@@ -15,13 +15,11 @@ namespace Offliine.Injection.Http
             Proprieties = proprieties;
         }
 
-        public HttpPropriety GetPropriety(string key)
+        public HTTPPropriety GetPropriety(string key)
         {
             foreach (var prop in Proprieties)
-            {
                 if (prop.Key == key)
                     return prop;
-            }
 
             return null;
         }

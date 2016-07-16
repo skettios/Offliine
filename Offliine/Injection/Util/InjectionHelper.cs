@@ -1,13 +1,67 @@
 ﻿using System;
 using System.Globalization;
-using Android.Util;
-using Java.IO;
+using System.IO;
+using Offliine.Html;
 
 namespace Offliine.Injection.Util
 {
+    public enum WebpageType
+    {
+        Error, Injection
+    }
+
     public class InjectionHelper
     {
-        public static void WriteU32(int value, OutputStream output)
+        public static Webpage GenerateWebpage(WebpageType type)
+        {
+            switch (type)
+            {
+                case WebpageType.Error:
+                    return new Webpage(_generateErrorPage);
+                case WebpageType.Injection:
+                    return new Webpage(_generateInjectionPage);
+                default:
+                    return null;
+            }
+        }
+
+        private static void _generateErrorPage(StreamWriter writer)
+        {
+            var html = new HtmlWriter(writer);
+
+            html.Begin();
+            html.BeginHeader();
+            html.Write("<title>Error</title>");
+            html.Write("<style>");
+            html.Write("html { font-family: arial; }");
+            html.Write("body { background-color: lightblue; text-align: center; }");
+            html.Write("</style>");
+            html.BeginBody();
+            html.Write("<h1>Offliine could not find system version!<h1>");
+            html.EndBody();
+            html.EndHeader();
+            html.End();
+        }
+
+        private static void _generateInjectionPage(StreamWriter writer)
+        {
+            var html = new HtmlWriter(writer);
+
+            html.BeginHeader();
+            html.Write("<title>Offliine</html>");
+            html.Write("<style>");
+            html.Write("html { font-family: arial; }");
+            html.Write("body { background-color: lightblue; text-align: center; }");
+            html.Write("div { border: 3px solid gray; border-radius: 5px; background-color: white; margin: auto; width: 81%; text-align: left; }");
+            html.Write("button { background-color: white; border: 3px solid lightblue; border-radius: 5px; text-decoration: none; width: 250px; height: 50px; margin: 5px; font-size: 20px; }");
+            html.Write("</style>");
+            html.EndHeader();
+            html.Begin();
+            html.Write("<h1>Offliine</h1>");
+            html.End();
+        }
+
+        public static void WriteU32(int value, StreamWriter output)
         {
             try
             {
@@ -18,7 +72,6 @@ namespace Offliine.Injection.Util
             }
             catch (Exception e)
             {
-                Log.Debug("Offliine", e.Message);
             }
         }
 
@@ -35,12 +88,11 @@ namespace Offliine.Injection.Util
             return data;
         }
 
-        public static byte[] ReadFile(File file)
+        public static byte[] ReadFile(Stream input)
         {
             try
             {
-                var input = new FileInputStream(file);
-                var output = new ByteArrayOutputStream();
+                var output = new MemoryStream();
 
                 var buffer = new byte['Ѐ'];
 
@@ -51,11 +103,10 @@ namespace Offliine.Injection.Util
                 input.Close();
                 output.Close();
 
-                return output.ToByteArray();
+                return output.ToArray();
             }
             catch (Exception e)
             {
-                Log.Debug("Offliine", e.Message);
             }
 
             return null;

@@ -4,7 +4,7 @@ using Android.Graphics;
 using Android.OS;
 using Android.Widget;
 
-namespace Offliine.Injection
+namespace Offliine.Android.Injection
 {
     [Service]
     public class InjectionService : Service

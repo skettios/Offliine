@@ -10,7 +10,7 @@ using Android.Util;
 using Console = System.Console;
 using File = Java.IO.File;
 
-namespace Offliine.Cafiine
+namespace Offliine.Android.Cafiine
 {
     class Server
     {

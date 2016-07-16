@@ -6,11 +6,11 @@ using Android.Runtime;
 using Android.Util;
 using Java.IO;
 using Java.Net;
-using Offliine.Injection.Exploit;
-using Offliine.Injection.Http;
-using Offliine.Injection.Util;
+using Offliine.Android.Injection.Exploit;
+using Offliine.Android.Injection.Http;
+using Offliine.Android.Injection.Util;
 
-namespace Offliine.Injection
+namespace Offliine.Android.Injection
 {
     public class Client
     {
