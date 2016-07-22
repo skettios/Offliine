@@ -7,13 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Android", "Offliin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Windows", "Offliine-Windows\Offliine-Windows.csproj", "{76932E5B-331A-4093-ACE9-D9E51A6343B0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Offliine-Plugins", "Offliine-Plugins", "{39116A1E-7977-4C8D-A671-989F528A5A1E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine", "Plugins\Offliine\Offliine.csproj", "{B7D3742B-7D41-442C-B43A-230EA9EC9E96}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Core", "Offliine-Core\Offliine-Core.csproj", "{6AD30814-7948-49CA-8393-4F8145850D23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-API", "Offliine-API\Offliine-API.csproj", "{48465E18-A550-4C18-BF3E-7A10DE1512E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Offliine-Plugins", "Offliine-Plugins", "{4FD4A89D-2E1D-466B-A702-6B2E9A67116C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine", "Offliine-Plugins\Offliine\Offliine.csproj", "{B7D3742B-7D41-442C-B43A-230EA9EC9E96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		{76932E5B-331A-4093-ACE9-D9E51A6343B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76932E5B-331A-4093-ACE9-D9E51A6343B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76932E5B-331A-4093-ACE9-D9E51A6343B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6AD30814-7948-49CA-8393-4F8145850D23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6AD30814-7948-49CA-8393-4F8145850D23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AD30814-7948-49CA-8393-4F8145850D23}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -43,11 +39,15 @@ Global
 		{48465E18-A550-4C18-BF3E-7A10DE1512E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48465E18-A550-4C18-BF3E-7A10DE1512E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48465E18-A550-4C18-BF3E-7A10DE1512E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B7D3742B-7D41-442C-B43A-230EA9EC9E96} = {39116A1E-7977-4C8D-A671-989F528A5A1E}
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96} = {4FD4A89D-2E1D-466B-A702-6B2E9A67116C}
 	EndGlobalSection
 EndGlobal
