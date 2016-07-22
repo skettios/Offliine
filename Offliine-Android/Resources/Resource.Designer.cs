@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("Offliine_Android.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("Offliine.Android.Resource", IsApplication=true)]
 
-namespace Offliine_Android
+namespace Offliine.Android
 {
 	
 	

@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine", "Offliine\Offliine.csproj", "{4967E9F7-6231-4531-A024-987C175288D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Android", "Offliine-Android\Offliine-Android.csproj", "{B88594AE-1355-4325-94F4-E12F88AEB604}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Windows", "Offliine-Windows\Offliine-Windows.csproj", "{76932E5B-331A-4093-ACE9-D9E51A6343B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Offliine-Plugins", "Offliine-Plugins", "{39116A1E-7977-4C8D-A671-989F528A5A1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine", "Plugins\Offliine\Offliine.csproj", "{B7D3742B-7D41-442C-B43A-230EA9EC9E96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-Core", "Offliine-Core\Offliine-Core.csproj", "{6AD30814-7948-49CA-8393-4F8145850D23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offliine-API", "Offliine-API\Offliine-API.csproj", "{48465E18-A550-4C18-BF3E-7A10DE1512E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +21,33 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4967E9F7-6231-4531-A024-987C175288D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4967E9F7-6231-4531-A024-987C175288D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4967E9F7-6231-4531-A024-987C175288D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4967E9F7-6231-4531-A024-987C175288D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B88594AE-1355-4325-94F4-E12F88AEB604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B88594AE-1355-4325-94F4-E12F88AEB604}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B88594AE-1355-4325-94F4-E12F88AEB604}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B88594AE-1355-4325-94F4-E12F88AEB604}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B88594AE-1355-4325-94F4-E12F88AEB604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B88594AE-1355-4325-94F4-E12F88AEB604}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{76932E5B-331A-4093-ACE9-D9E51A6343B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76932E5B-331A-4093-ACE9-D9E51A6343B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76932E5B-331A-4093-ACE9-D9E51A6343B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76932E5B-331A-4093-ACE9-D9E51A6343B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AD30814-7948-49CA-8393-4F8145850D23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AD30814-7948-49CA-8393-4F8145850D23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AD30814-7948-49CA-8393-4F8145850D23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AD30814-7948-49CA-8393-4F8145850D23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48465E18-A550-4C18-BF3E-7A10DE1512E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48465E18-A550-4C18-BF3E-7A10DE1512E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48465E18-A550-4C18-BF3E-7A10DE1512E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48465E18-A550-4C18-BF3E-7A10DE1512E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B7D3742B-7D41-442C-B43A-230EA9EC9E96} = {39116A1E-7977-4C8D-A671-989F528A5A1E}
 	EndGlobalSection
 EndGlobal
