@@ -1,14 +1,14 @@
 ﻿using Offliine.API.Plugin;
 
-namespace Offliine
+namespace Cafiine
 {
-    [PluginInfo("Offliine", "offliine")]
-    public class Offliine
+    [PluginInfo("Cafiine", "cafiine")]
+    public class Cafiine
     {
         [PluginInit]
         public void Init(IPluginInit init)
         {
-            init.Log("OFFLIINE");
+            init.Log("CAFIINE");
         }
     }
 }

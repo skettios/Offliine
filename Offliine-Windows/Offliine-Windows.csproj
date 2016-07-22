@@ -81,6 +81,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Offliine-API\Offliine-API.csproj">
+      <Project>{3723d1e5-e7b5-4a9d-8824-16031e811a66}</Project>
+      <Name>Offliine-API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Offliine-Core\Offliine-Core.csproj">
       <Project>{6ad30814-7948-49ca-8393-4f8145850d23}</Project>
       <Name>Offliine-Core</Name>

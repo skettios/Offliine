@@ -40,13 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PluginInitializer.cs" />
-    <Compile Include="PluginLoader.cs" />
+    <Compile Include="Plugin\PluginContainer.cs" />
+    <Compile Include="Plugin\PluginInitialize.cs" />
+    <Compile Include="Plugin\PluginLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Offliine-API\Offliine-API.csproj">
-      <Project>{48465e18-a550-4c18-bf3e-7a10de1512e2}</Project>
+      <Project>{3723d1e5-e7b5-4a9d-8824-16031e811a66}</Project>
       <Name>Offliine-API</Name>
     </ProjectReference>
   </ItemGroup>

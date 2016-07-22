@@ -1,9 +1,9 @@
 ﻿using System;
-using Offliine.API;
+using Offliine.API.Plugin;
 
-namespace Offliine.Core
+namespace Offliine.Core.Plugin
 {
-    public class PluginInitializer : IPluginInitializer
+    public class PluginInitialize : IPluginInit
     {
         public void Log(string msg)
         {
